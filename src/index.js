@@ -14,7 +14,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
     res.send({message : "application is running"})
 })
 
@@ -23,8 +23,8 @@ app.use("/category", categoryRouter)
 app.use("/products", productRouter)
 app.use("/login", loginRouter)
 
-app.listen(PORT, () => {
-    console.log(`application is running http://localhost:${PORT}`)
-})
+// app.listen(PORT, () => {
+//     console.log(`application is running http://localhost:${PORT}`)
+// })
 
 module.exports = app
