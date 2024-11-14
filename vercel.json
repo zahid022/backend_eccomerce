@@ -11,5 +11,9 @@
       "src": "/api/(.*)",
       "dest": "src/index.js"
     }
-  ]
+  ],
+  "env": {
+    "SUPABASE_URL": "https://xywxgssxplvvrtxfdbcb.supabase.co",
+    "SUPABASE_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh5d3hnc3N4cGx2dnJ0eGZkYmNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjUxMTUyMDMsImV4cCI6MjA0MDY5MTIwM30.47FeLJNwa8Ks9sned3wv-V4iRKZphPup0oO113zZ9_c"
+  }
 }
