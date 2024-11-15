@@ -19,9 +19,9 @@ const storage = multer.memoryStorage(); // Disk yerine hafıza kullanıyoruz
 const upload = multer({ storage });
 
 // Cloudinary'ye yükleme fonksiyonu
-const uploadToCloudinary = async (buffer, filename) => {
-  try {
-    const result = await cloudinary.uploader.upload_stream(
+const uploadToCloudinary = (buffer, filename) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
       {
         resource_type: 'auto', // Görsel ya da video olabilir
         public_id: filename, // İsteğe bağlı: Dosyanın Cloudinary'deki adı
@@ -29,19 +29,16 @@ const uploadToCloudinary = async (buffer, filename) => {
       },
       (error, result) => {
         if (error) {
-          console.error(error);
-          throw new Error('Cloudinary upload failed');
+          reject(error); // Hata varsa reddediyoruz
+        } else {
+          resolve(result); // Başarıyla tamamlandığında sonucu döndürüyoruz
         }
-        return result;
       }
     );
 
-    // Bu `buffer`'ı Cloudinary'ye göndereceğiz
-    result.end(buffer);
-  } catch (err) {
-    console.error(err);
-    throw new Error('Cloudinary upload failed');
-  }
+    // Stream'e dosya verisini gönder
+    stream.end(buffer);
+  });
 };
 
 // Image upload route
