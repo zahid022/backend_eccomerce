@@ -24,8 +24,4 @@ app.use("/api/products", productRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/img",loginFunction, imgRouter)
 
-// module.exports = app;
-
-app.listen(3000, () => {
-  console.log("application is running http://localhost:3000")
-})
+module.exports = app;
