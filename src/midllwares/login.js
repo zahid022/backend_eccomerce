@@ -7,7 +7,7 @@ async function loginFunction(req, res, next) {
         if (!authHeader) {
             return res.status(401).json({ error: "Unauthorized: No token provided" })
         }
-
+        
         const token = authHeader.split(" ")[1]
 
         if (!token) {
