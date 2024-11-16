@@ -27,6 +27,7 @@ const createProduct = async (req, res) => {
         'description',
         'category_id',
         'sub_category_id',
+        'stock',
         'img',
         'brand_id'
     ];
@@ -37,11 +38,13 @@ const createProduct = async (req, res) => {
         }
     }
 
-    const { name, price, discount, description, category_id, sub_category_id, img, brand_id } = req.body
+    const { name, price, discount, description, stock, category_id, sub_category_id, img, brand_id } = req.body
 
     if (discount && (+discount >= +price)) return res.status(400).json({ message: "the discount must be less than the price" })
 
     if (isNaN(price)) return res.status(400).send({ message: "price must be a number" })
+
+    if(isNaN(stock)) return res.status(400).send({message : "stock must be a number"})
 
     if (discount && isNaN(discount)) return res.status(400).send({ message: "discount must be a number" })
 
@@ -49,7 +52,7 @@ const createProduct = async (req, res) => {
 
     if (discount) dis = discount
 
-    let newData = await addProduct({ name, price, dis, description, category_id, sub_category_id, img, brand_id })
+    let newData = await addProduct({ name, price, dis, description, stock, category_id, sub_category_id, img, brand_id })
 
     if (!newData) return res.status(500).json({ error: "server error" })
 
@@ -97,6 +100,8 @@ const deleteProduct = async (req, res) => {
 
     res.json({message : "product deleted is successfully"})
 }
+
+
 
 module.exports = {
     allProduct,

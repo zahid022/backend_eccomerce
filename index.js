@@ -26,7 +26,6 @@ app.use("/api/login", loginRouter);
 app.use("/api/img", loginFunction, imgRouter)
 app.use("/api/cart", loginFunction, cartRouter)
 
-
 app.listen(3000, () => {
   console.log("http://localhost:3000")
 })
