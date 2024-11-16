@@ -2,13 +2,13 @@ const dotenv = require("dotenv");
 dotenv.config();
 const express = require("express");
 const cors = require("cors");
-const brandRouter = require("./routes/brand.route");
-const categoryRouter = require("./routes/category.route");
-const productRouter = require("./routes/product.route");
-const loginRouter = require("./routes/login.route");
-const imgRouter = require("./routes/img.route");
-const loginFunction = require("./midllwares/login");
-const cartRouter = require("./routes/cart.route");
+const brandRouter = require("./src/routes/brand.route");
+const categoryRouter = require("./src/routes/category.route");
+const productRouter = require("./src/routes/product.route");
+const loginRouter = require("./src/routes/login.route");
+const imgRouter = require("./src/routes/img.route");
+const loginFunction = require("./src/midllwares/login");
+const cartRouter = require("./src/routes/cart.route");
 
 const app = express();
 
@@ -23,10 +23,9 @@ app.use("/api/brand", brandRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/login", loginRouter);
-app.use("/api/img",loginFunction, imgRouter)
+app.use("/api/img", loginFunction, imgRouter)
 app.use("/api/cart", loginFunction, cartRouter)
 
-module.exports = app;
 
 app.listen(3000, () => {
   console.log("http://localhost:3000")
