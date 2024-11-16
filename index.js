@@ -9,6 +9,7 @@ const loginRouter = require("./src/routes/login.route");
 const imgRouter = require("./src/routes/img.route");
 const loginFunction = require("./src/midllwares/login");
 const cartRouter = require("./src/routes/cart.route");
+const commentRouter = require("./src/routes/comment.route");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.use("/api/brand", brandRouter);
 app.use("/api/category", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/login", loginRouter);
+app.use("/api/comments", commentRouter)
 app.use("/api/img", loginFunction, imgRouter)
 app.use("/api/cart", loginFunction, cartRouter)
 
