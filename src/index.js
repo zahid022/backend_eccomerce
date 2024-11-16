@@ -8,6 +8,7 @@ const productRouter = require("./routes/product.route");
 const loginRouter = require("./routes/login.route");
 const imgRouter = require("./routes/img.route");
 const loginFunction = require("./midllwares/login");
+const cartRouter = require("./routes/cart.route");
 
 const app = express();
 
@@ -23,5 +24,10 @@ app.use("/api/category", categoryRouter);
 app.use("/api/products", productRouter);
 app.use("/api/login", loginRouter);
 app.use("/api/img",loginFunction, imgRouter)
+app.use("/api/cart", loginFunction, cartRouter)
 
 module.exports = app;
+
+app.listen(3000, () => {
+  console.log("http://localhost:3000")
+})
