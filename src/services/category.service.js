@@ -25,7 +25,7 @@ const editCategory = async (name, slug, id) => {
 }
 
 const addSubCategory = async (name, slug, category_id) => {
-    const {data, error} = await supabase.from("sub-category").insert([{name, slug, category_id}]).select()
+    const {data, error} = await supabase.from("sub_category").insert([{name, slug, category_id}]).select()
 
     if(error) return false
 
@@ -33,7 +33,7 @@ const addSubCategory = async (name, slug, category_id) => {
 }
 
 const removeSubCategory = async (id) => {
-    const {data, error} = await supabase.from("sub-category").delete().eq("id", id).select()
+    const {data, error} = await supabase.from("sub_category").delete().eq("id", id).select()
 
     if(error) return false
 
@@ -41,7 +41,7 @@ const removeSubCategory = async (id) => {
 }
 
 const editSubCategory = async (obj, id) => {
-    const {data, error} = await supabase.from("sub-category").update(obj).eq("id", id).select()
+    const {data, error} = await supabase.from("sub_category").update(obj).eq("id", id).select()
 
     if(error) return false
 

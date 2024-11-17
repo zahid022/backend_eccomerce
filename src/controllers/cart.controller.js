@@ -21,7 +21,7 @@ const cartAdd = async (req, res) => {
 
     const { productId, quantity } = req.body
 
-    if(!productId || productId.toString().trim().length === 0 || !quantity || quantity.toString().trim().length === 0) return res.status(401).json({error : "product_id and quantity are required"})
+    if(!productId || productId.toString().trim().length === 0 || !quantity || quantity.toString().trim().length === 0) return res.status(401).json({error : "productId and quantity are required"})
 
     const newData = await cartCreate(user, productId, quantity)
 

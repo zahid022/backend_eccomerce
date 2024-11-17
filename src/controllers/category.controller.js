@@ -75,7 +75,7 @@ const updateCategory = async (req, res) => {
 }
 
 const allSubCategory = async (req, res) => {
-    const {data, error} = await supabase.from("sub-category").select("*")
+    const {data, error} = await supabase.from("sub_category").select("*")
 
     if(error) return res.status(500).json({error : error.message})
 
@@ -85,7 +85,7 @@ const allSubCategory = async (req, res) => {
 const byIdSubCategory = async (req, res) => {
     const { id } = req.params
 
-    const {data, error} = await supabase.from("sub-category").select("*").eq("id", id).single()
+    const {data, error} = await supabase.from("sub_category").select("*").eq("id", id).single()
 
     if(error) return res.status(404).json({error : "sub-category bot found"})
 
@@ -108,7 +108,7 @@ const createSubCategory = async (req, res) => {
 const deleteSubCategory = async (req, res) => {
     const { id } = req.params
 
-    const {data, error} = await supabase.from("sub-category").select("*")
+    const {data, error} = await supabase.from("sub_category").select("*")
 
     if(error) return res.status(500).json({error : error.message})
 
@@ -127,7 +127,7 @@ const updateSubCategory = async (req, res) => {
     const { id } = req.params
     const { name, slug, category_id } = req.body
 
-    const {data, error} = await supabase.from("sub-category").select("*")
+    const {data, error} = await supabase.from("sub_category").select("*")
 
     if(error) return res.status(500).json({error : error.message})
 

@@ -10,7 +10,7 @@ const allComment = async (id) => {
 
 const addComment = async (product_id, user_id, content) => {
     const { data, error } = await supabase.from("comments").insert([{ product_id, user_id, content }]).select()
-    console.log(data)
+    
     if (error) return false
 
     return data
