@@ -11,13 +11,7 @@ const register = async (obj) => {
 const login = async (obj) => {
     const { data, error } = await supabase.auth.signInWithPassword(obj)
 
-    if (error) {
-        // Hata durumunu kontrol et
-        if (error.message.includes('Invalid login credentials')) {
-            return 'Kullanıcı adı veya şifre hatalı.';
-        }
-        return error.message; // Genel hata mesajını döndür
-    }
+    if (error) return error.message
 
     return data
 }
