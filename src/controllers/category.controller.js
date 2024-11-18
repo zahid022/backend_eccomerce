@@ -1,10 +1,10 @@
-const { addCategory, removeCategory, editCategory, addSubCategory, removeSubCategory, editSubCategory } = require("../services/category.service")
+const { addCategory, removeCategory, editCategory, addSubCategory, removeSubCategory, editSubCategory, getCategories } = require("../services/category.service")
 const supabase = require("../supabase")
 
 const allCategory = async (req, res) => {
-    const {data, error} = await supabase.from("category").select("*")
+    const data = await getCategories()
 
-    if(error) return res.status(500).json({error : error.message})
+    if(!data) return res.status(500).json({error : error.message})
 
     res.json(data)
 }

@@ -1,4 +1,5 @@
-const { addProduct, editProduct, removeProduct } = require("../services/product.service")
+const { getCategories } = require("../services/category.service")
+const { addProduct, editProduct, removeProduct, productByCategory } = require("../services/product.service")
 const supabase = require("../supabase")
 
 const allProduct = async (req, res) => {
@@ -104,6 +105,21 @@ const deleteProduct = async (req, res) => {
     res.json({message : "product deleted is successfully"})
 }
 
+const byCategoryIdProduct = async (req, res) => {
+    const { categoryId } = req.params
+
+    const categories = await getCategories()
+
+    const bool = categories.find(item => +item.id === +categoryId)
+
+    if(!bool) return res.status(400).json({error : "id is invalid"})
+    
+    let result = await productByCategory(categoryId)
+
+    if(!result) return res.status(500).json({error : "server error"})
+
+    res.json(result)
+}
 
 
 module.exports = {
@@ -111,5 +127,6 @@ module.exports = {
     byIdProduct,
     createProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    byCategoryIdProduct
 }

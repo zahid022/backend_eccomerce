@@ -1,5 +1,13 @@
 const supabase = require("../supabase")
 
+const getCategories = async () => {
+    const {data, error} = await supabase.from("category").select("*")
+
+    if(error) return false
+
+    return data
+}
+
 const addCategory = async (name, slug) => {
     const {data, error} = await supabase.from("category").insert([{name, slug}]).select()
 
@@ -50,6 +58,7 @@ const editSubCategory = async (obj, id) => {
 
 module.exports = {
     addCategory,
+    getCategories,
     removeCategory,
     editCategory,
     addSubCategory,

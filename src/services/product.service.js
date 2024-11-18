@@ -35,8 +35,17 @@ const removeProduct = async (id) => {
     return true
 }
 
+const productByCategory = async (id) => {
+    const { data, error } = await supabase.from("products").select("*").eq("category_id", id)
+
+    if(error) return false
+
+    return data
+}
+
 module.exports = {
     addProduct,
     editProduct,
-    removeProduct
+    removeProduct,
+    productByCategory
 }
