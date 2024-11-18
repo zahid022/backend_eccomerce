@@ -10,7 +10,7 @@ const signUp = async (req, res) => {
 
     if (!data) return res.status(500).json({ error: data })
 
-    res.json(data.session.access_token)
+    res.json({ token: data.session.access_token })
 }
 
 const signin = async (req, res) => {
@@ -22,7 +22,7 @@ const signin = async (req, res) => {
 
     if (!data) return res.status(500).json({ error: data })
 
-    res.json(data.session.access_token)
+    res.json({ token: data.session.access_token })
 }
 
 const signOut = async (req, res) => {
