@@ -31,7 +31,8 @@ const createProduct = async (req, res) => {
         'stock',
         'img',
         'brand_id',
-        'size'
+        'size',
+        'color'
     ];
 
     for (let field of requiredFields) {
@@ -40,15 +41,17 @@ const createProduct = async (req, res) => {
         }
     }
 
-    const { name, price, discount, description, stock, category_id, sub_category_id, img, brand_id, size } = req.body
+    const { name, price, discount, description, stock, category_id, sub_category_id, img, brand_id, size, color } = req.body
 
     if (discount && (+discount >= +price)) return res.status(400).json({ message: "the discount must be less than the price" })
 
     if (isNaN(price)) return res.status(400).send({ message: "price must be a number" })
 
-    if(isNaN(stock)) return res.status(400).send({message : "stock must be a number"})
+    if (isNaN(stock)) return res.status(400).send({ message: "stock must be a number" })
 
-    if(!size || size.length === 0 || !Array.isArray(size)) return res.status(400).json({error : "size must be an array"})
+    if (!size || size.length === 0 || !Array.isArray(size)) return res.status(400).json({ error: "size must be an array" })
+
+    if (!color || color.length === 0 || !Array.isArray(size)) return res.status(400).json({ error: "color must be an array" })
 
     if (discount && isNaN(discount)) return res.status(400).send({ message: "discount must be a number" })
 
@@ -56,7 +59,7 @@ const createProduct = async (req, res) => {
 
     if (discount) dis = discount
 
-    let newData = await addProduct({ name, price, dis, description, stock, category_id, sub_category_id, img, brand_id, size })
+    let newData = await addProduct({ name, price, dis, description, stock, category_id, sub_category_id, img, brand_id, size, color })
 
     if (!newData) return res.status(500).json({ error: "server error" })
 
@@ -100,9 +103,9 @@ const deleteProduct = async (req, res) => {
 
     let txt = await removeProduct(id)
 
-    if(!txt) return res.status(500).json({error : "server error"})
+    if (!txt) return res.status(500).json({ error: "server error" })
 
-    res.json({message : "product deleted is successfully"})
+    res.json({ message: "product deleted is successfully" })
 }
 
 const byCategoryIdProduct = async (req, res) => {
@@ -112,11 +115,11 @@ const byCategoryIdProduct = async (req, res) => {
 
     const bool = categories.find(item => +item.id === +categoryId)
 
-    if(!bool) return res.status(400).json({error : "id is invalid"})
-    
+    if (!bool) return res.status(400).json({ error: "id is invalid" })
+
     let result = await productByCategory(categoryId)
 
-    if(!result) return res.status(500).json({error : "server error"})
+    if (!result) return res.status(500).json({ error: "server error" })
 
     res.json(result)
 }
