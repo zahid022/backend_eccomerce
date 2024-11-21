@@ -53,6 +53,8 @@ const createProduct = async (req, res) => {
 
     if (!color || color.length === 0 || !Array.isArray(size)) return res.status(400).json({ error: "color must be an array" })
 
+    if (!img || img.length === 0 || !Array.isArray(size)) return res.status(400).json({ error: "img must be an array" })
+
     if (discount && isNaN(discount)) return res.status(400).send({ message: "discount must be a number" })
 
     let dis = 0
