@@ -85,7 +85,7 @@ const allSubCategory = async (req, res) => {
 const byIdSubCategory = async (req, res) => {
     const { id } = req.params
 
-    const {data, error} = await supabase.from("sub_category").select("*").eq("id", id).single()
+    const {data, error} = await supabase.from("sub_category").select("*").eq("category_id", id)
 
     if(error) return res.status(404).json({error : "sub-category bot found"})
 
