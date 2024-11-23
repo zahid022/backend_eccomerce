@@ -1,8 +1,8 @@
 const supabase = require("../supabase")
 
-const addProduct = async ({ name, price, dis : discount, description,stock, category_id, sub_category_id, img, brand_id, size, color }) => {
+const addProduct = async ({ name, price, dis : discount, description,stock, category_id, sub_category_id, img, brand_id, size, color ,category_name}) => {
     
-    const {data, error} = await supabase.from("products").insert([{ name, price, discount, description,stock, category_id, sub_category_id, img, brand_id, size, color }]).select()
+    const {data, error} = await supabase.from("products").insert([{ name, price, discount, description,stock, category_id, sub_category_id, img, brand_id, size, color, category_name }]).select()
 
     if(error) return false
 

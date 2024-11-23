@@ -57,11 +57,13 @@ const createProduct = async (req, res) => {
 
     if (discount && isNaN(discount)) return res.status(400).send({ message: "discount must be a number" })
 
+    let categoryData = await supabase.from("category").select("*").eq("id", category_id).single()
+    let category_name = categoryData.name
     let dis = 0
 
     if (discount) dis = discount
 
-    let newData = await addProduct({ name, price, dis, description, stock, category_id, sub_category_id, img, brand_id, size, color })
+    let newData = await addProduct({ name, price, dis, description, stock, category_id, sub_category_id, img, brand_id, size, color,category_name })
 
     if (!newData) return res.status(500).json({ error: "server error" })
 
