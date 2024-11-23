@@ -58,7 +58,9 @@ const createProduct = async (req, res) => {
     if (discount && isNaN(discount)) return res.status(400).send({ message: "discount must be a number" })
 
     let categoryData = await supabase.from("category").select("*").eq("id", category_id).single()
-    let category_name = categoryData.name
+    let category_name = categoryData.data.name
+
+
     let dis = 0
 
     if (discount) dis = discount
