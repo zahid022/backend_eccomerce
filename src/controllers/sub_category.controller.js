@@ -26,7 +26,7 @@ const byCategorySub = async (req, res) => {
     const { id } = req.params
 
     try {
-        let data = await subCategoryService.byIdSubCategory(id)
+        let data = await subCategoryService.byCategorySub(id)
         res.json(data)
     } catch (err) {
         res.status(404).json({ error: err.message })
