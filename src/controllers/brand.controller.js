@@ -1,17 +1,17 @@
 const brandService = require("../services/brand.service");
 
 const allBrand = async (req, res) => {
-    let result = await brandService.allBrand()
+    let data = await brandService.allBrand()
 
-    res.json({data:result})
+    res.json(data)
 }
 
 const byIdBrand = async (req, res) => {
     const { id } = req.params
 
     try {
-        let result = await brandService.byIdBrand(id)
-        res.json({data:result})
+        let data = await brandService.byIdBrand(id)
+        res.json(data)
     } catch {
         res.status(404).json({ error: "Brand not found" })
     }
