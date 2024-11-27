@@ -1,42 +1,42 @@
-const { register, login } = require("../services/login.service");
-const supabase = require("../supabase");
+const loginService = require("../services/login.service");
 
 const signUp = async (req, res) => {
-    const { email, password } = req.body
+    const { body } = req
 
-    if (!email || email.toString().trim().length === 0 || !password || password.toString().trim().length === 0) return res.status(401).json({ error: "email and password are required" })
+    try {
+        let data = await loginService.signUp(body)
 
-    let data = await register({ email, password })
-
-    if (!data) return res.status(500).json({ error: data })
-
-    res.json({ token: data.session.access_token })
+        res.json({ token: data.session.access_token })
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
 }
 
 const signin = async (req, res) => {
-    const { email, password } = req.body
+    const { body } = req
 
-    if (!email || email.toString().trim().length === 0 || !password || password.toString().trim().length === 0) return res.status(401).json({ error: "email and password are required" })
+    try {
+        let data = await loginService.signin(body)
 
-    let data = await login({ email, password })
-
-    if (!data) return res.status(500).json({ error: data })
-
-    res.json({ token: data.session.access_token })
+        res.json({ token: data.session.access_token })
+    } catch (err) {
+        res.status(400).json({error : err.message})
+    }
 }
 
 const signOut = async (req, res) => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-        return res.status(400).json({ error: error.message });
+    try {
+        await loginService.signOut()
+        res.json({message : "User is sign out successfully"})
+    } catch (err) {
+        res.status(400).json({error : err.message})
     }
-
-    res.status(200).json({ message: "User signed out successfully" });
 };
 
-module.exports = {
+const loginController = {
     signUp,
     signin,
     signOut
 }
+
+module.exports = loginController

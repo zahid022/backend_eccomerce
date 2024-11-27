@@ -1,59 +1,62 @@
-const { cartAll, cartCreate, cartRemove } = require("../services/cart.service")
+const cartService = require("../services/cart.service")
 const getUser = require("../utils/user.get")
 
 const cartGet = async (req, res) => {
-    const user = await getUser(req)
+    let user = null
+    try {
+        user = await getUser(req)
+    } catch (err) {
+        return res.status(401).json({ error: err.message })
+    }
 
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-
-    const newData = await cartAll(user)
-
-    if (!newData) return res.status(500).json({ error: "server error" })
-
-    res.json(newData)
-
+    try {
+        const data = await cartService.cartGet(user.user.id)
+        res.json(data)
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
 }
 
 const cartAdd = async (req, res) => {
-    const user = await getUser(req)
+    let user = null
+    try {
+        user = await getUser(req)
+    } catch (err) {
+        return res.status(401).json({ error: err.message })
+    }
+    const { body } = req
 
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
-
-    const { productId, quantity } = req.body
-
-    if(!productId || productId.toString().trim().length === 0 || !quantity || quantity.toString().trim().length === 0) return res.status(401).json({error : "productId and quantity are required"})
-
-    const newData = await cartCreate(user, productId, quantity)
-
-    if (!newData) return res.status(500).json({ error: "server error" })
-
-    res.json(newData)
+    try {
+        const data = await cartService.cartAdd(user.user.id, body.product_id, body.count)
+        res.json(data)
+    } catch (err) {
+        res.status(400).json({ error: err.message })
+    }
 }
 
 const cartDelete = async (req, res) => {
-    const user = await getUser(req)
-
-    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+    let user = null
+    try {
+        user = await getUser(req)
+    } catch (err) {
+        return res.status(401).json({ error: err.message })
+    }
 
     const { id } = req.params
 
-    const newData = await cartAll(user)
-
-    if (!newData) return res.status(500).json({ error: "server error" })
-
-    const obj = newData.filter(item => +item.id === +id)
-
-    if(!obj) return res.status(401).json({error : "id is invalid"})
-
-    const text = await cartRemove(id, user)
-
-    if(!text) return res.status(500).json({error : "server error"})
-
-    res.json({message : "product is deleted successfully"})
+    try {
+        await cartService.cartDelete(id, user.user.id)
+    
+        res.json({ message: "product is deleted successfully" })
+    } catch (err) {
+        res.status(400).json({error : err.message})
+    }
 }
 
-module.exports = {
+const cartController = {
     cartGet,
     cartAdd,
     cartDelete
 }
+
+module.exports = cartController

@@ -1,109 +1,77 @@
-const { addBrand, removeBrand, putBrand, patchBrand } = require("../services/brand.service");
-const supabase = require("../supabase");
+const brandService = require("../services/brand.service");
 
 const allBrand = async (req, res) => {
-    const { data, error } = await supabase.from("brand").select("*")
+    let result = await brandService.allBrand()
 
-    if (error) return res.status(500).json({ error: error.message });
-
-    res.json(data)
+    res.json({data:result})
 }
 
 const byIdBrand = async (req, res) => {
     const { id } = req.params
 
-    const { data, error } = await supabase.from("brand").select("*").eq("id", id).single()
+    try {
+        let result = await brandService.byIdBrand(id)
+        res.json({data:result})
+    } catch {
+        res.status(404).json({ error: "Brand not found" })
+    }
 
-    if (error) return res.status(404).json({ error: "brand not found" })
-
-    res.json(data)
 }
 
 const createBrand = async (req, res) => {
+    const { body } = req;
 
-    const { name, slug } = req.body
+    try {
+        const newData = await brandService.createBrand(body);
 
-    if (!name || !slug) return res.status(400).json({ error: "name and slug are required" })
-
-    let newData = await addBrand(name, slug)
-
-    if (!newData) res.status(500).json({ error: "Server error" });
-
-    res.json(newData);
-}
+        res.json({ message: "Brand created successfully", data: newData });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};
 
 const deleteBrand = async (req, res) => {
     const { id } = req.params
 
-    const { data, error } = await supabase
-        .from("brand").select("*")
+    try {
+        await brandService.byIdBrand(id)
+    } catch {
+        return res.status(404).json({ error: "Brand not found" })
+    }
 
-    if (error) return res.status(500).json({ error: error.message });
+    try {
+        await brandService.deleteBrand(id)
+        res.json({ message: "brand deleted is successfully" });
+    } catch (err) {
+        res.status(500).json({error : err.message})
+    }
 
-    let brand = data.find(item => item.id === +id)
-
-    if (!brand) return res.status(404).json({ error: "brand is not found" })
-
-    let txt = removeBrand(id)
-
-    if (!txt) return res.status(500).json({ error: "Server error" });
-
-    res.status(200).json({ message: txt && "brand deleted is successfully" });
 }
 
 const replaceBrand = async (req, res) => {
     const { id } = req.params
-    const { name, slug } = req.body
+    const { body } = req
 
-    if (!name || !slug) return res.status(400).json({ error: "name and slug are required" })
+    try {
+        await brandService.byIdBrand(id)
+    } catch {
+        return res.status(404).json({ error: "Brand not found" })
+    }
 
-    const { data, error } = await supabase.from("brand").select("*")
-
-    if (error) return res.status(500).json({ error: error.message });
-
-    const brand = data.find(item => +item.id === +id)
-
-    if (!brand) return res.status(404).json({ message: "brand is not found" })
-
-    const newBrand = await putBrand(name, slug, id)
-
-    if (!newBrand) return res.status(500).json({ error: "server error" })
-
-    res.json(newBrand)
+    try {
+        const result = await brandService.replaceBrand(body, id)
+        res.json({message : "Brand updated successfully", data : result})
+    } catch (err) {
+        res.status(500).json({error : err.message})
+    }
 }
 
-const updateBrand = async (req, res) => {
-    const { id } = req.params
-
-    const { name, slug } = req.body
-
-    let updateFields = {}
-
-    if (name) updateFields.name = name
-    if (slug) updateFields.slug = slug
-
-    if (Object.keys(updateFields).length === 0) return res.status(400).json({ error: "No fields to update" })
-
-    const { data, error } = await supabase.from("brand").select("*")
-
-    if (error) res.status(500).json({ error: error.message })
-
-    const brand = data.find(item => +item.id === +id)
-
-    if (!brand) res.status(404).json({ message: "brand is not found" })
-
-    const newBrand = await patchBrand(body, id, res)
-
-    if (!newBrand) return res.status(500).json({ error: "server error" })
-
-    res.json({ message: "brand updated is successfully", newBrand })
-}
-
-module.exports = {
+const brandController = {
     allBrand,
+    byIdBrand,
     createBrand,
     deleteBrand,
-    replaceBrand,
-    updateBrand,
-    byIdBrand
+    replaceBrand
 }
+
+module.exports = brandController

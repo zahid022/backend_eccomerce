@@ -1,164 +1,82 @@
-const { addCategory, removeCategory, editCategory, addSubCategory, removeSubCategory, editSubCategory, getCategories } = require("../services/category.service")
-const supabase = require("../supabase")
+const categoryService = require("../services/category.service")
 
-const allCategory = async (req, res) => {
-    const data = await getCategories()
-
-    if(!data) return res.status(500).json({error : error.message})
-
-    res.json(data)
+const categories = async (req, res) => {
+    try {
+        const data = await categoryService.categories()
+        res.json(data)  
+    } catch (err) {
+        res.status(400).json({error : err.message})
+    }
+    
 }
 
 const byIdCategory = async (req, res) => {
     const { id } = req.params
 
-    const {data, error} = await supabase.from("category").select("*").eq("id", id).single()
+    try {
+        let data = await categoryService.byIdCategory(id)
+        res.json(data)
+    } catch (err) {
+        res.status(404).json({error : err.message})
+    }
 
-    if(error) return res.status(404).json({error : "category not found"})
-
-    res.json(data)
 }
 
 const createCategory = async (req, res) => {
-    const {name, slug} = req.body
+    const {body} = req
 
-    if(!name || !slug) return res.status(400).json({error : "name and slug are required"})
-
-    const newCategory = await addCategory(name, slug)
-
-    if(!newCategory) return res.status(500).json({error : "Server error"})
-
-    res.json(newCategory)
-}
-
-const deleteCategory = async (req, res) => {
-    const { id } = req.params
-
-    const {data, error} = await supabase.from("category").select("*")
-
-    if(error) return res.status(500).json({error : error.message})
-    
-    let category = data.find(item => +item.id === +id)
-
-    if(!category) return res.status(400).json({error : "category not found"})
-
-    let txt = removeCategory(id)
-
-    if(!txt) return res.status(500).json({error : "Server error"})
-
-    res.json({message : "category deleted is successfully"})
-
-
+    try {
+        let data = await categoryService.createCategory(body)
+        res.json({message : "Category created successfully", data})
+    } catch (err) {
+        res.status(400).json({error : err.message})
+    }
 }
 
 const updateCategory = async (req, res) => {
     const { id } = req.params
 
-    const {name, slug} = req.body
+    const {body} = req
 
-    if(!name || !slug) return res.status(400).json({error : "name and slug are required"})
+    try {
+        await categoryService.byIdCategory(id)
+    } catch (err) {
+        return res.status(404).json({error : err.message})
+    }
 
-    const { data, error } = await supabase.from("category").select("*")
 
-    if(error) return res.status(500).json({error : error.message})
+    try {
+        let data = await categoryService.updateCategory(body, id)
 
-    let category = data.find(item => +item.id === +id)
-
-    if(!category) return res.status(400).json({error : "category not found"})
-
-    let newData = await editCategory(name, slug, id)
-
-    if(!newData) return res.status(500).json({error : "server error"})
-
-    res.json(newData)
-    
+        res.json({message : "category is updated successfully", data})
+    } catch (err) {
+        res.status(400).json({error: "Category update is failed"})
+    }
 }
 
-const allSubCategory = async (req, res) => {
-    const {data, error} = await supabase.from("sub_category").select("*")
-
-    if(error) return res.status(500).json({error : error.message})
-
-    res.json(data)
-}
-
-const byIdSubCategory = async (req, res) => {
+const deleteCategory = async (req, res) => {
     const { id } = req.params
 
-    const {data, error} = await supabase.from("sub_category").select("*").eq("category_id", id)
+    try {
+        await categoryService.byIdCategory(id)
+    } catch (err) {
+        return res.status(404).json({error : err.message})
+    }
 
-    if(error) return res.status(404).json({error : "sub-category bot found"})
-
-    res.json(data)
-
+    try {
+        await categoryService.deleteCategory(id)
+        res.json({message : "category deleted is successfully"})
+    } catch (err) {
+        res.json(400).json({error : err.message})
+    }
 }
 
-const createSubCategory = async (req, res) => {
-    const {name, slug, category_id} = req.body
-
-    if(!name || !slug || !category_id) return res.status(400).json({error : "name, slug and category_id are required"})
-
-    let newData = await addSubCategory(name, slug, category_id)
-
-    if(!newData) return res.status(500).json({error : "server error"})
-
-    res.json({message: "sub-category created successfully", newData})
-}
-
-const deleteSubCategory = async (req, res) => {
-    const { id } = req.params
-
-    const {data, error} = await supabase.from("sub_category").select("*")
-
-    if(error) return res.status(500).json({error : error.message})
-
-    const subcategory = data.find(item => +item.id === +id)
-
-    if(!subcategory) return res.status(404).json({error : "sub-category not found"})
-
-    let txt = await removeSubCategory(id)
-
-    if(!txt) return res.status(500).json({error : "server error"})
-    
-    res.json({message : "sub-category deleted successfully"})
-}
-
-const updateSubCategory = async (req, res) => {
-    const { id } = req.params
-    const { name, slug, category_id } = req.body
-
-    const {data, error} = await supabase.from("sub_category").select("*")
-
-    if(error) return res.status(500).json({error : error.message})
-
-    const subcategory = data.find(item => +item.id === +id) 
-
-    if(!subcategory) return res.status(404).json({error : "sub-category not found"})
-
-    let obj = {}
-
-    if(name) obj.name = name
-    if(slug) obj.slug = slug
-    if(category_id) obj.category_id = category_id
-
-    if(Object.keys(obj).length === 0) return res.status(400).json({error : "field is empty"})
-
-    let newData = await editSubCategory(obj, id)
-
-    if(!newData) return res.status(500).json({error : "server error"})
-
-    res.json(newData)
-}
-
-module.exports = {
-    allCategory,
+const categoryController = {
+    categories,
     byIdCategory,
     createCategory,
-    deleteCategory,
     updateCategory,
-    allSubCategory,
-    byIdSubCategory,
-    createSubCategory,
-    deleteSubCategory,
-    updateSubCategory
+    deleteCategory
 }
+
+module.exports = categoryController

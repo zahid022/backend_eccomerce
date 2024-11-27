@@ -1,19 +1,19 @@
 const express = require("express")
-const { allBrand, createBrand, deleteBrand, replaceBrand, updateBrand, byIdBrand } = require("../controllers/brand.controller")
 const loginFunction = require("../midllwares/login")
+const brandController = require("../controllers/brand.controller")
+const { validationMiddleware } = require("../midllwares/validation.middleware")
+const brandValidate = require("../validations/brand.validation")
 
 const brandRouter = express.Router()
 
-brandRouter.get("/", allBrand)
+brandRouter.get("/", brandController.allBrand)
 
-brandRouter.get("/:id", byIdBrand)
+brandRouter.get("/:id", brandController.byIdBrand)
 
-brandRouter.post("/", loginFunction, createBrand)
+brandRouter.post("/", loginFunction, validationMiddleware(brandValidate), brandController.createBrand)
 
-brandRouter.delete("/:id", loginFunction, deleteBrand)
+brandRouter.delete("/:id", loginFunction, brandController.deleteBrand)
 
-brandRouter.put("/:id", loginFunction, replaceBrand)
-
-brandRouter.patch("/:id", loginFunction, updateBrand)
+brandRouter.put("/:id", loginFunction, validationMiddleware(brandValidate), brandController.replaceBrand)
 
 module.exports = brandRouter

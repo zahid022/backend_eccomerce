@@ -1,11 +1,12 @@
 const express = require("express")
-const { getComment, createComment, deleteComment } = require("../controllers/comment.controller")
-const loginFunction = require("../midllwares/login")
+const commentController = require("../controllers/comment.controller")
+const { validationMiddleware } = require("../midllwares/validation.middleware")
+const commentValidate = require("../validations/comment.validation")
 
 const commentRouter = express.Router()
 
-commentRouter.get("/:id", getComment)
-commentRouter.post("/:id", loginFunction, createComment)
-commentRouter.delete("/:id", loginFunction, deleteComment)
+commentRouter.get("/:id", commentController.getComment)
+commentRouter.post("/:id",validationMiddleware(commentValidate), commentController.createComment)
+commentRouter.delete("/:id", commentController.deleteComment)
 
 module.exports = commentRouter

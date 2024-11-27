@@ -6,7 +6,7 @@ const getUser = async (req) => {
 
     const {data, error} = await supabase.auth.getUser(token)
     
-    if(error) return false
+    if(error) throw new Error("Unauthorized: No token provided");
     
     return data
 }

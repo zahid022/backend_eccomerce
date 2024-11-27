@@ -1,22 +1,33 @@
 const supabase = require("../supabase")
 
-const register = async (obj) => {
+const signUp = async (obj) => {
     const { data, error } = await supabase.auth.signUp(obj)
 
-    if (error) return error.message
+    if (error) throw new Error(error.message);
 
     return data
 }
 
-const login = async (obj) => {
+const signin = async (obj) => {
     const { data, error } = await supabase.auth.signInWithPassword(obj)
 
-    if (error) return error.message
+    if (error) throw new Error(error.message);
 
     return data
 }
 
-module.exports = {
-    register,
-    login
+const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) throw new Error(error.message);
+
+    return true
 }
+
+const loginService = {
+    signUp,
+    signin,
+    signOut
+}
+
+module.exports = loginService

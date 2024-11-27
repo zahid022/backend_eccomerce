@@ -1,44 +1,56 @@
 const supabase = require("../supabase");
 
-const addBrand = async (name, slug) => {
-    const { data, error } = await supabase.from("brand").insert([{ name, slug }]).select()
+const allBrand = async () => {
+    const {data, error} = await supabase.from("brand").select("*")
 
-    if (error)  return false
+    if(error) return error.message
 
     return data
 }
 
-const removeBrand = async (id) => {
-    const { data, error } = await supabase
+const byIdBrand = async (id) => {
+
+    const { data, error } = await supabase.from("brand").select("*").eq("id", id).single()
+
+    if (error) throw new Error("Brand not found");
+     
+    return data
+}
+
+const createBrand = async (params) => {
+    const { data, error } = await supabase.from("brand").insert([params]).select();
+
+    if (error) throw new Error(`Brand creation failed: ${error.message}`);
+    
+    return data;
+};
+
+const deleteBrand = async (id) => {
+    const { error } = await supabase
         .from("brand")
         .delete()
         .eq("id", id)
         .select()
 
-    if (error) return false
-    
+    if (error) throw new Error("Brand deleted failed");
+
     return true
 }
 
-const putBrand = async (name, slug, id) => {
-    const {data, error} = await supabase.from("brand").update({name, slug}).eq("id", id).select()
+const replaceBrand = async (params, id) => {
+    const { data, error } = await supabase.from("brand").update(params).eq("id", id).select()
 
-    if (error) return false
-
-   return data
-}
-
-const patchBrand = async (obj,id) => {
-    const {data, error} = await supabase.from("brand").update(obj).eq("id", id).select()
-
-    if(error) false
+    if (error) return error.message
 
     return data
 }
 
-module.exports = {
-    addBrand,
-    removeBrand,
-    putBrand,
-    patchBrand
+const brandService = {
+    allBrand,
+    byIdBrand,
+    createBrand,
+    deleteBrand,
+    replaceBrand
 }
+
+module.exports = brandService

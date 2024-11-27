@@ -1,67 +1,51 @@
 const supabase = require("../supabase")
 
-const getCategories = async () => {
-    const {data, error} = await supabase.from("category").select("*")
+const categories = async () => {
+    const { data, error } = await supabase.from("category").select("*")
 
-    if(error) return false
-
-    return data
-}
-
-const addCategory = async (name, slug) => {
-    const {data, error} = await supabase.from("category").insert([{name, slug}]).select()
-
-    if(error) return false
+    if (error) throw new Error(error.message);
 
     return data
 }
 
-const removeCategory = async (id) => {
-    const {data, error} = await supabase.from("category").delete().eq("id", id).select()
+const byIdCategory = async (id) => {
+    const { data, error } = await supabase.from("category").select("*").eq("id", id).single()
 
-    if(error) return false
+    if (error) throw new Error("Category not found");
+    
+    return data
+}
+
+const createCategory = async (params) => {
+    const { data, error } = await supabase.from("category").insert([params]).select()
+
+    if (error) throw new Error(`Category failed to create ${error.message}`);
+    
+    return data
+}
+
+const updateCategory = async (params, id) => {
+    const { data, error } = await supabase.from("category").update(params).eq("id", id).select()
+
+    if (error) throw new Error(error.message);
+
+    return data
+}
+
+const deleteCategory = async (id) => {
+    const { error } = await supabase.from("category").delete().eq("id", id).select()
+
+    if (error) throw new Error(error.message);
 
     return true
 }
 
-const editCategory = async (name, slug, id) => {
-    const {data, error} = await supabase.from("category").update({name, slug}).eq("id", id).select()
-
-    if(error) return false
-
-    return data
+const categoryService = {
+    categories,
+    byIdCategory,
+    createCategory,
+    updateCategory,
+    deleteCategory
 }
 
-const addSubCategory = async (name, slug, category_id) => {
-    const {data, error} = await supabase.from("sub_category").insert([{name, slug, category_id}]).select()
-
-    if(error) return false
-
-    return data
-}
-
-const removeSubCategory = async (id) => {
-    const {data, error} = await supabase.from("sub_category").delete().eq("id", id).select()
-
-    if(error) return false
-
-    return true
-}
-
-const editSubCategory = async (obj, id) => {
-    const {data, error} = await supabase.from("sub_category").update(obj).eq("id", id).select()
-
-    if(error) return false
-
-    return data
-}
-
-module.exports = {
-    addCategory,
-    getCategories,
-    removeCategory,
-    editCategory,
-    addSubCategory,
-    removeSubCategory,
-    editSubCategory
-}
+module.exports = categoryService

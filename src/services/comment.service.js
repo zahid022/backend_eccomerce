@@ -1,31 +1,44 @@
 const supabase = require("../supabase")
+const productService = require("./product.service")
 
-const allComment = async (id) => {
+const getComment = async (id) => {
+
+    await productService.byIdProduct(id)
+
     const { data, error } = await supabase.from("comments").select("*").eq("product_id", id)
 
-    if (error) return false
+    if (error) throw new Error(error.message);
 
     return data
 }
 
-const addComment = async (product_id, user_id, content) => {
+const createComment = async (product_id, user_id, content) => {
+
+    await productService.byIdProduct(product_id)
+
     const { data, error } = await supabase.from("comments").insert([{ product_id, user_id, content }]).select()
-    
-    if (error) return false
+
+    if (error) throw new Error(error.message);
 
     return data
 }
 
-const removeComment = async (id, user_id) => {
-    const { data, error } = await supabase.from("comments").delete().eq("id", id).eq("user_id", user_id)
+const deleteComment = async (id, user_id) => {
+    const { error : errorNot } = await supabase.from("comments").select("*").eq("id", id).single()
+    
+    if (errorNot) throw new Error("Comment not found");
 
-    if(error) return false
+    const { error } = await supabase.from("comments").delete().eq("id", id).eq("user_id", user_id)
+
+    if (error) throw new Error(error.message);
 
     return true
 }
 
-module.exports = {
-    allComment,
-    addComment,
-    removeComment
+const commentService = {
+    getComment,
+    createComment,
+    deleteComment
 }
+
+module.exports = commentService

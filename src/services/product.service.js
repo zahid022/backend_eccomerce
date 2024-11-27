@@ -1,15 +1,78 @@
-const supabase = require("../supabase")
+const supabase = require("../supabase");
+const brandService = require("./brand.service");
+const categoryService = require("./category.service");
+const subCategoryService = require("./sub_category.service");
 
-const addProduct = async ({ name, price, dis : discount, description,stock, category_id, sub_category_id, img, brand_id, size, color ,category_name}) => {
-    
-    const {data, error} = await supabase.from("products").insert([{ name, price, discount, description,stock, category_id, sub_category_id, img, brand_id, size, color, category_name }]).select()
+const allProduct = async () => {
+    const { data, error } = await supabase.from("products").select("*")
 
-    if(error) return false
+    if (error) throw new Error(error.message);
 
     return data
 }
 
-const editProduct = async (body, id) => {
+const byIdProduct = async (id) => {
+    const { data, error } = await supabase.from("products").select("*").eq("id", id).single()
+
+    if (error) throw new Error("Product not found");
+
+    return data
+}
+
+const createProduct = async (params) => {
+    const { name: brand } = await brandService.byIdBrand(params.brand_id)
+    params.brand_name = brand
+
+    const { name: category } = await categoryService.byIdCategory(params.category_id)
+    params.category_name = category
+
+    const { name: sub_category } = await subCategoryService.byIdSubCategory(params.sub_category_id)
+    params.sub_category_name = sub_category
+
+    const { data, error } = await supabase.from("products").insert([params]).select()
+
+    if (error) throw new Error(error.message);
+
+    return data
+}
+
+const byCategoryIdProduct = async (id) => {
+
+    await categoryService.byIdCategory(id)
+
+    const { data, error } = await supabase.from("products").select("*").eq("category_id", id)
+
+    if (error) throw new Error(error.message);
+    
+    return data
+}
+
+const byBrandIdProduct = async (id) => {
+
+    await brandService.byIdBrand(id)
+
+    const { data, error } = await supabase.from("products").select("*").eq("brand_id", id)
+
+    if (error) throw new Error(error.message);
+    
+    return data
+}
+
+const bySubCategoryIdProduct = async (id) => {
+
+    await subCategoryService.byIdSubCategory(id)
+
+    const { data, error } = await supabase.from("products").select("*").eq("sub_category_id", id)
+
+    if (error) throw new Error(error.message);
+    
+    return data
+}
+
+const updateProduct = async (body, id) => {
+
+    await byIdProduct(id)
+
     const newProduct = {};
 
     for (const [key, value] of Object.entries(body)) {
@@ -18,34 +81,34 @@ const editProduct = async (body, id) => {
         }
     }
 
-    if(Object.keys(newProduct).length === 0) return false
+    if(Object.keys(newProduct).length === 0) throw new Error("Field is missing");
 
     const {data, error} = await supabase.from("products").update(newProduct).eq("id", id).select()
 
-    if(error) return false
+    if(error) throw new Error(error.message);
 
     return data
 };
 
-const removeProduct = async (id) => {
+const deleteProduct = async (id) => {
+    await byIdProduct(id)
+
     const {error} = await supabase.from("products").delete().eq("id", id).select()
 
-    if(error) return false
+    if(error) throw new Error(error.message);
 
     return true
 }
 
-const productByCategory = async (id) => {
-    const { data, error } = await supabase.from("products").select("*").eq("category_id", id)
-
-    if(error) return false
-
-    return data
+const productService = {
+    allProduct,
+    byIdProduct,
+    createProduct,
+    byCategoryIdProduct,
+    byBrandIdProduct,
+    bySubCategoryIdProduct,
+    updateProduct,
+    deleteProduct
 }
 
-module.exports = {
-    addProduct,
-    editProduct,
-    removeProduct,
-    productByCategory
-}
+module.exports = productService
