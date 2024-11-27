@@ -22,6 +22,17 @@ const byIdSubCategory = async (req, res) => {
     }
 }
 
+const byCategorySub = async (req, res) => {
+    const { id } = req.params
+
+    try {
+        let data = await subCategoryService.byIdSubCategory(id)
+        res.json(data)
+    } catch (err) {
+        res.status(404).json({ error: err.message })
+    }
+}
+
 const createSubCategory = async (req, res) => {
     const { body } = req
 
@@ -87,6 +98,7 @@ const deleteSubCategory = async (req, res) => {
 const subCategoryController = {
     allSubCategory,
     byIdSubCategory,
+    byCategorySub,
     createSubCategory,
     updateSubCategory,
     deleteSubCategory

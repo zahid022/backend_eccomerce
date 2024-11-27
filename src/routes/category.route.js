@@ -10,6 +10,7 @@ const categoryRouter = express.Router()
 
 categoryRouter.get("/subcategory", subCategoryController.allSubCategory)
 categoryRouter.get("/subcategory/:id", subCategoryController.byIdSubCategory)
+categoryRouter.get("/subcategory/cat/:id", subCategoryController.byCategorySub)
 categoryRouter.post("/subcategory", loginFunction, validationMiddleware(subCategoryValidate), subCategoryController.createSubCategory)
 categoryRouter.put("/subcategory/:id", loginFunction, validationMiddleware(subCategoryValidate), subCategoryController.updateSubCategory)
 categoryRouter.delete("/subcategory/:id", loginFunction, subCategoryController.deleteSubCategory)

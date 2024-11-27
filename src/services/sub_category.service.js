@@ -16,6 +16,14 @@ const byIdSubCategory = async (id) => {
     return data
 }
 
+const byCategorySub = async (id) => {
+    const { data, error } = await supabase.from("sub_category").select("*").eq("category_id", id).single()
+
+    if (error) throw new Error("Category not found");
+    
+    return data
+}
+
 const createSubCategory = async (params) => {
     const { data, error } = await supabase.from("sub_category").insert([params]).select()
 
@@ -45,7 +53,8 @@ const subCategoryService = {
     byIdSubCategory,
     createSubCategory,
     updateSubCategory,
-    deleteSubCategory
+    deleteSubCategory,
+    byCategorySub
 }
 
 module.exports = subCategoryService
