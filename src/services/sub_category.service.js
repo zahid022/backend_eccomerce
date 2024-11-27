@@ -17,7 +17,7 @@ const byIdSubCategory = async (id) => {
 }
 
 const byCategorySub = async (id) => {
-    const { data, error } = await supabase.from("sub_category").select("*").eq("category_id", id).single()
+    const { data, error } = await supabase.from("sub_category").select("*").eq("category_id", id)
 
     if (error) throw new Error("Category not found");
     
