@@ -2,6 +2,7 @@ const brandService = require("../services/brand.service");
 
 const allBrand = async (req, res) => {
     let data = await brandService.allBrand()
+    
 
     res.json(data)
 }

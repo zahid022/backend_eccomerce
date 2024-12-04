@@ -20,6 +20,10 @@ async function loginFunction(req, res, next) {
             return res.status(401).json({ error: 'Unauthorized: Invalid token' });
         }
 
+        if(data.user.app_metadata.role !== "admin"){
+            return res.status(401).json({error : 'You are not an ADMIN'})
+        }
+
         next()
 
     } catch (err) {

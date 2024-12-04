@@ -5,7 +5,6 @@ const signUp = async (req, res) => {
 
     try {
         let data = await loginService.signUp(body)
-
         res.json({ token: data.session.access_token })
     } catch (err) {
         res.status(400).json({ error: err.message })
