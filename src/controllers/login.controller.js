@@ -5,7 +5,10 @@ const signUp = async (req, res) => {
 
     try {
         let data = await loginService.signUp(body)
-        res.json({ token: data.session.access_token })
+        if(!data.user.app_metadata.role){
+            data.user.app_metadata.role = "user"
+        }
+        res.json({ token: data.session.access_token, role : data.user.app_metadata.role })
     } catch (err) {
         res.status(400).json({ error: err.message })
     }
@@ -16,8 +19,10 @@ const signin = async (req, res) => {
 
     try {
         let data = await loginService.signin(body)
-
-        res.json({ token: data.session.access_token })
+        if(!data.user.app_metadata.role){
+            data.user.app_metadata.role = "user"
+        }
+        res.json({ token: data.session.access_token, role : data.user.app_metadata.role })
     } catch (err) {
         res.status(400).json({error : err.message})
     }
