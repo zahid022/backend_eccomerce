@@ -2,13 +2,17 @@ const productService = require("../services/product.service")
 
 const allProduct = async (req, res) => {
     try {
-        let data = await productService.allProduct()
+        const { page = 1, limit = 10, color, size, brand, category, subCategory, minPrice, maxPrice, discount } = req.query;
+        const colors = color ? color.split("%") : [];
+        const sizes = size ? size.split("%") : [];
+        const data = await productService.allProduct({ page, limit, color: colors, size : sizes, brand, category, subCategory, minPrice, maxPrice, discount });
 
-        res.json(data)
+        res.json(data);
     } catch (err) {
-        res.status(400).json({ error: err.message })
+        res.status(400).json({ error: err.message });
     }
-}
+};
+
 
 const byIdProduct = async (req, res) => {
     const { id } = req.params
@@ -87,9 +91,9 @@ const deleteProduct = async (req, res) => {
     const { id } = req.params
     try {
         await productService.deleteProduct(id)
-        res.json({message : "Product is deleted successfully"})
+        res.json({ message: "Product is deleted successfully" })
     } catch (err) {
-        res.status(400).json({error : err.message})
+        res.status(400).json({ error: err.message })
     }
 }
 

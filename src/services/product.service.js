@@ -3,13 +3,57 @@ const brandService = require("./brand.service");
 const categoryService = require("./category.service");
 const subCategoryService = require("./sub_category.service");
 
-const allProduct = async () => {
-    const { data, error } = await supabase.from("products").select("*")
+const allProduct = async ({
+    page,
+    limit,
+    color,
+    size,
+    brand,
+    category,
+    subCategory,
+    minPrice,
+    maxPrice,
+    discount
+}) => {
+    const offset = (page - 1) * limit;
 
-    if (error) throw new Error(error.message);
+    let query = supabase
+        .from("products")
+        .select("*", { count: "exact" });
 
-    return data
-}
+
+    if (color && color.length > 0) {
+        const colorsArray = `{${color.join(",")}}`; 
+        query = query.overlaps("color", colorsArray); 
+    }
+
+    if (size && size.length > 0) {
+        const sizesArray = `{${size.join(",")}}`; 
+        query = query.overlaps("size", sizesArray);
+    }
+
+    if (brand) query = query.eq("brand_id", brand);
+    if (category) query = query.eq("category_id", category);
+    if (subCategory) query = query.eq("sub_category_id", subCategory);
+
+    if (minPrice) query = query.gte("price", parseFloat(minPrice));
+    if (maxPrice) query = query.lte("price", parseFloat(maxPrice));
+
+    if (discount !== undefined) query = query.eq("discount", discount === "true");
+
+    query = query.range(offset, offset + parseInt(limit) - 1);
+
+    const { data, error, count } = await query;
+
+    return {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total: count || 0,
+        data : data || [],
+    };
+};
+
+
 
 const byIdProduct = async (id) => {
     const { data, error } = await supabase.from("products").select("*").eq("id", id).single()
