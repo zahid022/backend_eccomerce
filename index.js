@@ -10,6 +10,7 @@ const imgRouter = require("./src/routes/img.route");
 const loginFunction = require("./src/midllwares/login");
 const cartRouter = require("./src/routes/cart.route");
 const commentRouter = require("./src/routes/comment.route");
+const bannerRouter = require("./src/routes/banner.route");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/login", loginRouter);
 app.use("/api/comments", commentRouter)
 app.use("/api/img", loginFunction, imgRouter)
 app.use("/api/cart", loginFunction, cartRouter)
+app.use("/api/banners", bannerRouter)
 
 app.listen(3000, () => {
   console.log("http://localhost:3000")
