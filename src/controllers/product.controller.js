@@ -2,10 +2,11 @@ const productService = require("../services/product.service")
 
 const allProduct = async (req, res) => {
     try {
-        const { page = 1, limit = 10, color, size, brand, category, subCategory, minPrice, maxPrice, discount } = req.query;
+        const { page = 1, limit = 10, color, size, brand, category, subCategory, minPrice, maxPrice, discount, tag } = req.query;
         const colors = color ? color.split("%") : [];
         const sizes = size ? size.split("%") : [];
-        const data = await productService.allProduct({ page, limit, color: colors, size : sizes, brand, category, subCategory, minPrice, maxPrice, discount });
+        const tags = tag ? tag.split("%") : [];
+        const data = await productService.allProduct({ page, limit, color: colors, size : sizes, brand, category, subCategory, minPrice, maxPrice, discount, tags });
 
         res.json(data);
     } catch (err) {

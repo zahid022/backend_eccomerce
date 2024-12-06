@@ -9,7 +9,7 @@ const productValidate = Joi.object({
     size: Joi.array().items(Joi.string()).required(),
     color: Joi.array().items(Joi.string()).required(),
     img: Joi.array().items(Joi.string()).required(),
-    tags : Joi.array().items(Joi.string()).required(),
+    tags : Joi.array().items(Joi.string().valid("new", "classics", "trending")).required(),
     category_id: Joi.number().required(),
     brand_id: Joi.number().required(),
     sub_category_id: Joi.number().required()

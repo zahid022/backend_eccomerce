@@ -13,7 +13,8 @@ const allProduct = async ({
     subCategory,
     minPrice,
     maxPrice,
-    discount
+    discount,
+    tags
 }) => {
     const offset = (page - 1) * limit;
 
@@ -30,6 +31,11 @@ const allProduct = async ({
     if (size && size.length > 0) {
         const sizesArray = `{${size.join(",")}}`; 
         query = query.overlaps("size", sizesArray);
+    }
+    
+    if (tags && tags.length > 0) {
+        const tagsArray = `{${tags.join(",")}}`; 
+        query = query.overlaps("tags", tagsArray);
     }
 
     if (brand) query = query.eq("brand_id", brand);
