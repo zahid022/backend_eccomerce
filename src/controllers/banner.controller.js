@@ -32,10 +32,40 @@ const deletetile = async (req, res) => {
     }
 }
 
+const getTrend = async (req, res) => {
+    try {
+        let data = await bannerService.getTrend()
+        res.json(data)
+    } catch (err) {
+        res.status(500).json(err.message)
+    }
+}
+
+const createTrend = async (req, res) => {
+    try {
+        let data = await bannerService.createTrend(req.body)
+        res.json(data)
+    } catch (err) {
+        res.status(500).json(err.message)
+    }
+}
+
+const deleteTrend = async (req, res) => {
+    try {
+        await bannerService.deleteTrend(req.params.id)
+        res.json({message : "Trend is deleted successfully"})
+    } catch (err) {
+        res.status(500).json(err.message)
+    }
+}
+
 const bannerController = {
     getTile,
     createTile,
-    deletetile
+    deletetile,
+    getTrend,
+    createTrend,
+    deleteTrend
 }
 
 module.exports = bannerController
