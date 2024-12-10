@@ -44,9 +44,11 @@ const allProduct = async ({
 
     if (minPrice) query = query.gte("price", parseFloat(minPrice));
     if (maxPrice) query = query.lte("price", parseFloat(maxPrice));
-
-    if (discount !== undefined) query = query.eq("discount", discount === "true");
-
+    
+    if (discount === "true") {
+        query = query.gt("discount", 0); // 0'dan büyük olanları getirir
+    }
+    
     query = query.range(offset, offset + parseInt(limit) - 1);
 
     const { data, error, count } = await query;
